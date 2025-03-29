@@ -10,6 +10,10 @@ import MedicalNews from './../components/MedicalNews';
 import MedicalPartners from './../components/MedicalPartners';
 import UpdatedFooter from './../components/Footer';
 
+
+
+
+
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">

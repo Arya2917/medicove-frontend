@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { specialtiesData } from '../data/HealthCareData';
+import { specialtiesData } from '../data/HealthCareData'; // Importing specialties data
+
+// Updated specialties data with removed items
+
 
 const CentresOfExcellence = () => {
   const [activeTab, setActiveTab] = useState('Specialties');
@@ -85,7 +88,7 @@ const CentresOfExcellence = () => {
             className="w-full md:w-2/3 md:pl-8" 
             ref={gridContainerRef}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 h-full overflow-y-auto">
+            <div className="grid grid-cols-2 gap-4 h-full overflow-y-auto">
               {specialtiesData.map((specialty) => (
                 <Link
                   key={specialty.id}
@@ -111,7 +114,6 @@ const CentresOfExcellence = () => {
                 </Link>
               ))}
             </div>
-            
           </div>
         </div>
       </div>

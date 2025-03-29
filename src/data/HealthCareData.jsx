@@ -9,14 +9,5 @@ export const specialtiesData = [
   { id: 'ophthalmology', name: 'Ophthalmology', iconPath: '/images/specialties/ophthalmology.svg' },
   { id: 'pediatrics', name: 'Pediatrics', iconPath: '/images/specialties/pediatrics.svg' },
   { id: 'endocrinology', name: 'Endocrinology', iconPath: '/images/specialties/endocrinology.svg' },
-  { id: 'urology', name: 'Urology', iconPath: '/images/specialties/urology.svg' },
-  { id: 'nephrology', name: 'Nephrology', iconPath: '/images/specialties/nephrology.svg' },
-  { id: 'pulmonology', name: 'Pulmonology', iconPath: '/images/specialties/pulmonology.svg' },
-  { id: 'rheumatology', name: 'Rheumatology', iconPath: '/images/specialties/rheumatology.svg' },
-  { id: 'neurosurgery', name: 'Neurosurgery', iconPath: '/images/specialties/neurosurgery.svg' },
-  { id: 'radiology', name: 'Radiology', iconPath: '/images/specialties/radiology.svg' },
-  { id: 'plastic-surgery', name: 'Plastic Surgery', iconPath: '/images/specialties/plastic-surgery.svg' },
-  { id: 'neonatology', name: 'Neonatology', iconPath: '/images/specialties/neonatology.svg' },
-  { id: 'vascular-surgery', name: 'Vascular Surgery', iconPath: '/images/specialties/vascular-surgery.svg' },
-  { id: 'psychiatry', name: 'Psychiatry', iconPath: '/images/specialties/psychiatry.svg' },
+ 
 ];

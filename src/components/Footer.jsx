@@ -75,7 +75,7 @@ const Footer = () => {
             </h3>
             
             <ul className="space-y-3">
-              {['Cardiology', 'Neurology', 'Gastroenterology', 'Orthopedic', 'Oncology', 'Gynecology', 'Pediatrics', 'Urology', 'Dermatology', 'Pulmonology'].map((dept, index) => (
+              {['Cardiology', 'Neurology', 'Gastroenterology', 'Orthopedic', 'Oncology', 'Gynecology', 'Pediatrics', 'Dermatology'].map((dept, index) => (
                 <li key={index}>
                   <Link to={`/specialties/${dept.toLowerCase()}`} className="text-teal-100 hover:text-yellow-500 transition-colors flex items-center">
                     <ChevronRight size={16} className="mr-2" />

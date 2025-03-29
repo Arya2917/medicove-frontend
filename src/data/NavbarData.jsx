@@ -1,5 +1,9 @@
 export const navbarData = [
   {
+    name: 'Home',
+    items: null  // No dropdown for Home
+  },
+  {
     name: 'About Us',
     items: ['History', 'Board of Directors', 'Management Team', 'Vision & Mission', 'Accreditations', 'Awards']
   },
@@ -16,19 +20,11 @@ export const navbarData = [
     ]
   },
   {
-    name: 'Patients & Visitors',
-    items: ['Patient Information', 'Visitors Information', 'Insurance & Billing', 'Patient Testimonials', 'Patient Rights']
-  },
-  {
-    name: 'Locations',
-    items: ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata', 'Find All Locations']
-  },
-  {
     name: 'Doctors',
-    items: ['Find a Doctor', 'Doctor Profiles', 'Specialist Teams', 'International Faculty']
+    items: null  // No dropdown for Doctors
   },
   {
     name: 'Contact',
-    items: ['Emergency Contact', 'Appointment Booking', 'Feedback', 'Career Opportunities', 'Media Relations']
+    items: null  // No dropdown for Contact
   }
 ];

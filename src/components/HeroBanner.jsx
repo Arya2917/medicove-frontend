@@ -82,7 +82,7 @@ const HeroBanner = () => {
   const currentSlide = slides[currentIndex];
 
   return (
-    <div className="relative mt-6 mx-4 md:mx-8 rounded-lg overflow-hidden shadow-xl">
+    <div className="relative mt-12 mx-4 md:mx-8 rounded-lg overflow-hidden shadow-xl z-10">
       <div 
         className="relative h-80 md:h-96 bg-teal-800 overflow-hidden group transition-all duration-500"
         style={{
