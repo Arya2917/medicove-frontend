@@ -8,7 +8,7 @@ export const doctors = [
       availability: "Mon-Fri",
       hospital: "Central Medical Center",
       image: "/api/placeholder/150/150",
-      consultationFee: "$150"
+      consultationFee: "₹150"
     },
     {
       id: 2,
@@ -19,7 +19,7 @@ export const doctors = [
       availability: "Mon-Sat",
       hospital: "Children's Hospital",
       image: "/api/placeholder/150/150",
-      consultationFee: "$120"
+      consultationFee: "₹120"
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export const doctors = [
       availability: "Tue-Sat",
       hospital: "Skin Care Clinic",
       image: "/api/placeholder/150/150",
-      consultationFee: "$130"
+      consultationFee: "₹130"
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ export const doctors = [
       availability: "Mon-Fri",
       hospital: "Bone & Joint Center",
       image: "/api/placeholder/150/150",
-      consultationFee: "$160"
+      consultationFee: "₹160"
     },
     {
       id: 5,
@@ -52,7 +52,7 @@ export const doctors = [
       availability: "Mon-Thu",
       hospital: "Neuro Care Institute",
       image: "/api/placeholder/150/150",
-      consultationFee: "$170"
+      consultationFee: "₹170"
     },
     {
       id: 6,
@@ -63,7 +63,7 @@ export const doctors = [
       availability: "Wed-Sun",
       hospital: "Mental Health Center",
       image: "/api/placeholder/150/150",
-      consultationFee: "$140"
+      consultationFee: "₹140"
     },
     {
       id: 7,
@@ -74,7 +74,7 @@ export const doctors = [
       availability: "Mon-Fri",
       hospital: "Women's Health Clinic",
       image: "/api/placeholder/150/150",
-      consultationFee: "$145"
+      consultationFee: "₹145"
     },
     {
       id: 8,
@@ -85,7 +85,7 @@ export const doctors = [
       availability: "Tue-Sat",
       hospital: "ENT Care Center",
       image: "/api/placeholder/150/150",
-      consultationFee: "$125"
+      consultationFee: "₹125"
     },
     {
       id: 9,
@@ -96,7 +96,7 @@ export const doctors = [
       availability: "Mon-Sat",
       hospital: "Dental Care Clinic",
       image: "/api/placeholder/150/150",
-      consultationFee: "$110"
+      consultationFee: "₹110"
     },
     {
       id: 10,
@@ -107,7 +107,7 @@ export const doctors = [
       availability: "Mon-Sun",
       hospital: "Family Care Center",
       image: "/api/placeholder/150/150",
-      consultationFee: "$100"
+      consultationFee: "₹100"
     }
   ];
   
