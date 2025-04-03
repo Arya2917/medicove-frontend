@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, Clock, User, FileText, DollarSign } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFetch } from "../../../hooks/useFetch";
@@ -7,7 +7,7 @@ import { useAuth } from "../../../hooks/useAuth";
 const BookAppointment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, getToken } = useAuth();
 
   // Extract doctorId from URL query parameters
   const params = new URLSearchParams(location.search);
@@ -23,12 +23,33 @@ const BookAppointment = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [userId, setUserId] = useState(null);
 
   // Fetch doctors from the API
-  const { data, loading, error } = useFetch(
+  const { data, loading } = useFetch(
     "http://localhost:4000/api/user/doctors"
   );
   const doctors = data?.doctors || [];
+
+  // Extract user ID from JWT token
+  useEffect(() => {
+    // Extract userId from token
+    const token = getToken();
+    if (token) {
+      try {
+        // JWT tokens are in format: header.payload.signature
+        const payload = token.split('.')[1];
+        // Decode the base64 payload
+        const decodedPayload = JSON.parse(atob(payload));
+        if (decodedPayload.id) {
+          console.log("Extracted user ID from token:", decodedPayload.id);
+          setUserId(decodedPayload.id);
+        }
+      } catch (error) {
+        console.error('Failed to extract ID from token:', error);
+      }
+    }
+  }, [getToken]);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -89,12 +110,18 @@ const BookAppointment = () => {
     setIsSubmitting(true);
     setErrorMessage("");
 
-    // In BookAppointment.jsx, in the handleSubmit function
     console.log("Current user object:", user);
-    console.log("User ID being used:", user._id);
+    // Use the extracted userId from token
+    console.log("User ID being used:", userId);
 
     if (!isAuthenticated()) {
       navigate("/login");
+      return;
+    }
+
+    if (!userId) {
+      setErrorMessage("Unable to identify user. Please try logging in again.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -102,11 +129,11 @@ const BookAppointment = () => {
     const formattedDate = formData.date; // Already in YYYY-MM-DD format from input type="date"
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getToken();
 
-      // Create the request payload
+      // Create the request payload with userId from token
       const payload = {
-        userId: user.id || user._id, // Try both formats to ensure one works
+        userId: userId, // Use the extracted userId from token
         docId: formData.doctorId,
         slotDate: formattedDate,
         slotTime: formData.time,
