@@ -2,8 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Home from "./pages/Home";
-import DoctorsList from "./services/DoctorsList";
-import MedicineList from "./services/MedicineList.";
+import QuickLinks from "./components/QuickLinks";   
 import UserDashboard from "./pages/Dashboard/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 
@@ -22,9 +21,7 @@ import History from "./components/History";
 import BoardOfDirectors from "./components/Directors";
 import ManagementTeam from "./components/Team";
 import VisionMission from "./components/Vision";
-//import Accreditations from './components/Accreditations';
-//import Awards from './components/Awards';
-
+import AccreditationAwards from "./components/Accredations";
 // Authentication pages
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Register";
@@ -41,8 +38,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />{" "}
         {/* Added redirect for /home */}
-        <Route path="/doctors" element={<DoctorsList />} />
-        <Route path="/pharmacy" element={<MedicineList />} />
+        <Route path="/quicklinks" element={<QuickLinks />} />
         <Route path="/contact" element={<Contact />} />
         {/* Dashboard routes with nested routes */}
         <Route path="/dashboard/*" element={<UserDashboard />} />
@@ -67,6 +63,8 @@ function App() {
         />
         <Route path="/about/management-team" element={<ManagementTeam />} />
         <Route path="/about/vision-&-mission" element={<VisionMission />} />
+        <Route path="/about/accredationawards" element={<AccreditationAwards />} />
+
         {/* Authentication routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<SignupPage />} />

@@ -8,48 +8,47 @@ import {
   Shield, 
   FileText, 
   PhoneCall,
-  ChevronRight
+  ChevronRight,
+  Pill,
+  Phone,
+  UserPlus
 } from 'lucide-react';
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const sidebarItems = [
-    { 
-      icon: <Calendar size={24} />, 
-      text: 'Book Appointment', 
-      color: 'bg-yellow-100',
-      iconColor: 'text-yellow-600',
-      link: '/appointment' 
-    },
-    { 
-      icon: <Building size={24} />, 
-      text: 'Find Location', 
-      color: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      link: '/locations' 
-    },
-    { 
-      icon: <Shield size={24} />, 
-      text: 'Health Packages', 
-      color: 'bg-green-100',
-      iconColor: 'text-green-600',
-      link: '/packages' 
-    },
+  
     { 
       icon: <User size={24} />, 
-      text: 'Find Doctor', 
+      text: 'All Doctors', 
       color: 'bg-purple-100',
       iconColor: 'text-purple-600',
-      link: '/doctors' 
+      link: '/quicklinks' 
     },
     { 
-      icon: <Clock size={24} />, 
-      text: 'Working Hours', 
+      icon: <Pill size={24} />, 
+      text: 'Management Team', 
+      color: 'bg-green-100',
+      iconColor: 'text-green-600',
+      link: '/about/management-team' 
+    },
+    { 
+      icon: <UserPlus size={24} />, 
+      text: 'Register', 
+      color: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+      link: '/register' 
+    },
+    { 
+      icon: <Phone size={24} />, 
+      text: 'Contact Us', 
       color: 'bg-orange-100',
       iconColor: 'text-orange-600',
-      link: '/working-hours' 
+      link: '/contact' 
     },
+ 
+
   ];
 
   return (

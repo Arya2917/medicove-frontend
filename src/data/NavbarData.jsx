@@ -5,7 +5,7 @@ export const navbarData = [
   },
   {
     name: 'About Us',
-    items: ['History', 'Board of Directors', 'Management Team', 'Vision & Mission', 'Accreditations', 'Awards']
+    items: ['History', 'Board of Directors', 'Management Team', 'Vision & Mission', 'Accreditations']
   },
   {
     name: 'Centers of Excellence',
@@ -21,7 +21,8 @@ export const navbarData = [
   },
   {
     name: 'Doctors',
-    items: null  // No dropdown for Doctors
+    items: null,  // No dropdown for Doctors
+    link:  '/quicklinks'  
   },
   {
     name: 'Contact',

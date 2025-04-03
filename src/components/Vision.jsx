@@ -1,5 +1,7 @@
 import React from 'react';
 import { Heart, Users, Award, Zap, BookOpen, Globe } from 'lucide-react';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const VisionMission = () => {
   const values = [
@@ -37,6 +39,9 @@ const VisionMission = () => {
   
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* Navbar */}
+      <Navbar />
+      
       {/* Page Header */}
       <div className="bg-teal-900 text-white py-16">
         <div className="container mx-auto px-4">
@@ -140,6 +145,9 @@ const VisionMission = () => {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

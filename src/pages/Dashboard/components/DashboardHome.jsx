@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { Calendar, Clock, Pill, FileText, Activity, ChevronDown, ChevronRight, CreditCard } from 'lucide-react';
+import { Calendar, Clock, ChevronDown, ChevronRight, CreditCard, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -156,7 +156,7 @@ const DashboardHome = () => {
           </div>
           <div className="flex-grow text-center md:text-left">
             <h2 className="text-2xl font-bold">Welcome, {user?.name || "User"}!</h2>
-            <p className="text-teal-100">We're here to help you manage your healthcare journey.</p>
+            <p className="text-teal-100">We are here to help you manage your healthcare journey.</p>
             <div className="mt-2">
               <span className="inline-block bg-teal-700 rounded-full px-3 py-1 text-sm font-semibold mr-2">
                 Patient ID: {getUserId() || "N/A"}
@@ -170,7 +170,7 @@ const DashboardHome = () => {
       </div>
       
       {/* Quick actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <Link to="/dashboard/appointments" className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
           <div className="bg-teal-100 p-3 rounded-full mb-3">
             <Calendar size={24} className="text-teal-600" />
@@ -183,20 +183,6 @@ const DashboardHome = () => {
             <FileText size={24} className="text-teal-600" />
           </div>
           <h3 className="font-medium text-gray-800">Find Doctors</h3>
-        </Link>
-        
-        <Link to="/dashboard/prescriptions" className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
-          <div className="bg-teal-100 p-3 rounded-full mb-3">
-            <Pill size={24} className="text-teal-600" />
-          </div>
-          <h3 className="font-medium text-gray-800">My Prescriptions</h3>
-        </Link>
-        
-        <Link to="/dashboard/vitals" className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
-          <div className="bg-teal-100 p-3 rounded-full mb-3">
-            <Activity size={24} className="text-teal-600" />
-          </div>
-          <h3 className="font-medium text-gray-800">Health Vitals</h3>
         </Link>
       </div>
       
