@@ -1,75 +1,93 @@
-import React, { useState } from "react";
-import { Search, Edit, Trash2, Phone, Mail } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Edit, Trash2, Phone, Mail, MapPin, Award, Clock } from "lucide-react";
+import { useAuth } from "../../../hooks/useAuth"; // Import the useAuth hook
+import { useFetch } from "../../../hooks/useFetch"; // Import the useFetch hook
 
 const AllDoctors = () => {
-  // Sample doctor data - in a real app, you would fetch this from your backend
-  const [doctors, setDoctors] = useState([
-    { 
-      id: 1, 
-      name: "Dr. Maria Rodriguez", 
-      specialty: "Cardiology", 
-      email: "maria.rodriguez@hospital.com", 
-      phone: "+1 (555) 123-4567", 
-      joinDate: "2022-05-15", 
-      status: "Active",
-      image: "https://randomuser.me/api/portraits/women/1.jpg" 
-    },
-    { 
-      id: 2, 
-      name: "Dr. Robert Chen", 
-      specialty: "Neurology", 
-      email: "robert.chen@hospital.com", 
-      phone: "+1 (555) 234-5678", 
-      joinDate: "2021-08-10", 
-      status: "Active",
-      image: "https://randomuser.me/api/portraits/men/2.jpg" 
-    },
-    { 
-      id: 3, 
-      name: "Dr. Lisa Wong", 
-      specialty: "Oncology", 
-      email: "lisa.wong@hospital.com", 
-      phone: "+1 (555) 345-6789", 
-      joinDate: "2023-01-20", 
-      status: "Active",
-      image: "https://randomuser.me/api/portraits/women/3.jpg" 
-    },
-    { 
-      id: 4, 
-      name: "Dr. James Wilson", 
-      specialty: "Orthopedic", 
-      email: "james.wilson@hospital.com", 
-      phone: "+1 (555) 456-7890", 
-      joinDate: "2020-11-05",
-      status: "On Leave",
-      image: "https://randomuser.me/api/portraits/men/4.jpg" 
-    },
-    { 
-      id: 5, 
-      name: "Dr. Sarah Patel", 
-      specialty: "Dermatology", 
-      email: "sarah.patel@hospital.com", 
-      phone: "+1 (555) 567-8901", 
-      joinDate: "2023-05-12",
-      status: "Active",
-      image: "https://randomuser.me/api/portraits/women/5.jpg" 
-    },
-  ]);
+  // State for doctors data
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { getToken, isAuthenticated, isAdmin } = useAuth(); // Get authentication helpers
 
   // Search functionality
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch doctors data from API using the useFetch hook
+  const { data, loading: fetchLoading, error: fetchError } = useFetch(
+    "http://localhost:4000/api/admin/all-doctors"
+  );
+
+  // Update state when data is fetched
+  useEffect(() => {
+    if (data) {
+      setDoctors(data);
+      setLoading(false);
+    }
+    if (fetchError) {
+      setError(fetchError);
+      setLoading(false);
+    }
+  }, [data, fetchError]);
+
+  // Filter doctors based on search term
   const filteredDoctors = doctors.filter(doctor => 
     doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doctor.speciality?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doctor.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Handle delete doctor
-  const handleDeleteDoctor = (id) => {
+  const handleDeleteDoctor = async (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
-      setDoctors(doctors.filter(doctor => doctor.id !== id));
+      try {
+        const token = getToken();
+        const response = await fetch(`http://localhost:4000/api/admin/doctors/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to delete: ${response.status}`);
+        }
+        
+        // Update local state after successful deletion
+        setDoctors(doctors.filter(doctor => doctor._id !== id));
+      } catch (err) {
+        alert(`Error deleting doctor: ${err.message}`);
+      }
     }
   };
+
+  // Format status based on availability
+  const getStatus = (available) => {
+    return available ? "Active" : "On Leave";
+  };
+
+  // Format address
+  const formatAddress = (address) => {
+    if (!address) return "N/A";
+    return `${address.line1}, ${address.city}`;
+  };
+
+  // Check if user is authorized to view this page
+  useEffect(() => {
+    if (!loading && !isAdmin()) {
+      // Redirect or show unauthorized message
+      setError("Unauthorized: Admin access required");
+    }
+  }, [loading, isAdmin]);
+
+  if (loading || fetchLoading) {
+    return <div className="flex justify-center items-center h-64">Loading doctors data...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center">Error: {error}</div>;
+  }
 
   return (
     <div>
@@ -102,10 +120,13 @@ const AllDoctors = () => {
                   Contact
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Join Date
+                  Qualification
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fee
                 </th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -113,55 +134,77 @@ const AllDoctors = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredDoctors.map((doctor) => (
-                <tr key={doctor.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <img className="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt={doctor.name} />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{doctor.specialty}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 flex flex-col">
-                      <div className="flex items-center mb-1">
-                        <Mail size={14} className="mr-1 text-gray-400" />
-                        {doctor.email}
-                      </div>
+              {filteredDoctors.length > 0 ? (
+                filteredDoctors.map((doctor) => (
+                  <tr key={doctor._id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <Phone size={14} className="mr-1 text-gray-400" />
-                        {doctor.phone}
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <img 
+                            className="h-10 w-10 rounded-full" 
+                            src="/api/placeholder/40/40" 
+                            alt={doctor.name} 
+                          />
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
+                          <div className="text-xs text-gray-500 flex items-center mt-1">
+                            <Clock size={12} className="mr-1" />
+                            {doctor.experience} years exp
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{doctor.speciality}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500 flex flex-col">
+                        <div className="flex items-center mb-1">
+                          <Mail size={14} className="mr-1 text-gray-400" />
+                          {doctor.email}
+                        </div>
+                        <div className="flex items-center">
+                          <MapPin size={14} className="mr-1 text-gray-400" />
+                          {formatAddress(doctor.address)}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 flex items-center">
+                        <Award size={14} className="mr-1 text-gray-400" />
+                        {doctor.degree}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        ${doctor.available ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                        {getStatus(doctor.available)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      ₹{doctor.fee}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                        <Edit size={18} />
+                      </button>
+                      <button 
+                        className="text-red-600 hover:text-red-900"
+                        onClick={() => handleDeleteDoctor(doctor._id)}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
+                    No doctors found matching your search.
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(doctor.joinDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${doctor.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                      {doctor.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-3">
-                      <Edit size={18} />
-                    </button>
-                    <button 
-                      className="text-red-600 hover:text-red-900"
-                      onClick={() => handleDeleteDoctor(doctor.id)}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                </tr>  
+              )}
             </tbody>
           </table>
         </div>
