@@ -2,12 +2,12 @@ import React from 'react';
 
 const MedicalPartners = () => {
   const partners = [
-    { name: "TrustMed Insurance", logo: "/images/partner1.png" },
-    { name: "National Health Alliance", logo: "/images/partner2.png" },
-    { name: "Global Medical Research", logo: "/images/partner3.png" },
-    { name: "PharmaTech Solutions", logo: "/images/partner4.png" },
-    { name: "HealthCare International", logo: "/images/partner5.png" },
-    { name: "MedEd University", logo: "/images/partner6.png" }
+    { name: "TrustMed Insurance", logo: "/images/service.jpg" },
+    { name: "National Health Alliance", logo: "/images/emergency.jpg" },
+    { name: "Global Medical Research", logo: "/images/program.jpg" },
+    { name: "PharmaTech Solutions", logo: "/images/treatement.jpg" },
+    { name: "HealthCare International", logo: "/images/doctor-patient-consultation.jpg" },
+    { name: "MedEd University", logo: "/images/service.jpg" }
   ];
 
   return (

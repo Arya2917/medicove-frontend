@@ -142,10 +142,7 @@ const HeroBanner = () => {
             </div>
           </div>
           
-          {/* Logo with pulsing animation */}
-          <div className="absolute top-4 right-4 animate-pulse">
-            <img src="/images/doctor-logo.png" alt="Logo" className="h-12 md:h-16" />
-          </div>
+         
           
           {/* Decorative elements */}
           {currentSlide.iconPath && (

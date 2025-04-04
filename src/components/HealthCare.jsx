@@ -1,64 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { specialtiesData } from '../data/HealthCareData'; // Importing specialties data
-
-// Updated specialties data with removed items
-
+import { specialtiesData } from '../data/HealthCareData';
 
 const CentresOfExcellence = () => {
-  const [activeTab, setActiveTab] = useState('Specialties');
   const imageContainerRef = useRef(null);
   const gridContainerRef = useRef(null);
-  
-  // Effect to handle matching heights
+
+  // Match the height of grid with image container
   useEffect(() => {
     const matchHeights = () => {
       if (imageContainerRef.current && gridContainerRef.current) {
-        // Reset the grid height first to get natural image height
         gridContainerRef.current.style.height = 'auto';
-        
-        // Get the height of the image container
         const imageHeight = imageContainerRef.current.clientHeight;
-        
-        // Set the grid container height to match
         gridContainerRef.current.style.height = `${imageHeight}px`;
       }
     };
-    
-    // Initial matching
+
     matchHeights();
-    
-    // Re-match on window resize
     window.addEventListener('resize', matchHeights);
-    
-    // Cleanup
+
     return () => window.removeEventListener('resize', matchHeights);
   }, []);
-  
+
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        {/* Tab Navigation */}
-        <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm mb-8">
-          <div className="flex justify-center">
-            {['Specialties', 'Procedures', 'ProHealth'].map((tab) => (
-              <button
-                key={tab}
-                className={`px-8 py-4 text-center text-gray-800 font-medium relative ${
-                  activeTab === tab ? 'text-teal-600' : ''
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600"></div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content */}
+        {/* Heading */}
         <h2 className="text-3xl font-bold text-center mb-4">
           Explore our Centres of Clinical Excellence
         </h2>
@@ -72,7 +39,7 @@ const CentresOfExcellence = () => {
         </p>
 
         <div className="flex flex-wrap items-start">
-          {/* Doctor Image - Left Side */}
+          {/* Doctor Image */}
           <div className="w-full md:w-1/3 mb-8 md:mb-0" ref={imageContainerRef}>
             <div className="rounded-lg overflow-hidden shadow-lg h-full">
               <img
@@ -83,11 +50,8 @@ const CentresOfExcellence = () => {
             </div>
           </div>
 
-          {/* Specialties Grid - Right Side */}
-          <div 
-            className="w-full md:w-2/3 md:pl-8" 
-            ref={gridContainerRef}
-          >
+          {/* Specialties Grid */}
+          <div className="w-full md:w-2/3 md:pl-8" ref={gridContainerRef}>
             <div className="grid grid-cols-2 gap-4 h-full overflow-y-auto">
               {specialtiesData.map((specialty) => (
                 <Link
@@ -97,10 +61,10 @@ const CentresOfExcellence = () => {
                 >
                   <div className="w-12 h-12 flex items-center justify-center mb-2">
                     {specialty.iconPath ? (
-                      <img 
+                      <img
                         src={specialty.iconPath}
                         alt={specialty.name}
-                        className="max-w-full max-h-full" 
+                        className="max-w-full max-h-full"
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-500">

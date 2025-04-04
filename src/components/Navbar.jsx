@@ -80,7 +80,7 @@ const Navbar = () => {
               <span className="text-sm text-gray-500">Emergency</span>
               <div className="flex items-center text-teal-600">
                 <span className="mr-1">📞</span>
-                <span className="font-medium text-lg">1066</span>
+                <span className="font-medium text-lg">121</span>
               </div>
             </div>
             
@@ -88,7 +88,7 @@ const Navbar = () => {
               <span className="text-sm text-gray-500">Hospital Lifeline</span>
               <div className="flex items-center text-teal-600">
                 <span className="mr-1">📞</span>
-                <span className="font-medium text-lg">1860-500-1066</span>
+                <span className="font-medium text-lg">7028587790</span>
               </div>
             </div>
             

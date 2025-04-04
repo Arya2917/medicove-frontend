@@ -19,7 +19,7 @@ const PatientTestimonials = () => {
       name: "Priya Mehta",
       age: 36,
       treatment: "Neurological Rehabilitation",
-      image: "/images/patient2.jpg",
+      image: "/images/priya.jpg",
       rating: 5,
       quote: "After my stroke, I couldn't imagine regaining my mobility. The neurological team designed a personalized rehab program that helped me recover much faster than expected. Their dedication and encouragement made all the difference.",
       doctor: "Dr. Vikram Malhotra",

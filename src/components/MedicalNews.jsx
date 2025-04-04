@@ -6,15 +6,15 @@ const MedicalNews = () => {
     {
       title: "New Cardiac Wing Inauguration",
       excerpt: "State-of-the-art cardiac care center inaugurated with advanced technologies and specialized care units.",
-      image: "/images/cardiac-wing.jpg",
+      image: "/images/emergency.jpg",
       date: "March 15, 2025",
-      author: "Dr. Ravi Kumar",
+      author: "Dr. Ravi Kumar", 
       category: "Hospital Updates"
     },
     {
       title: "Breakthrough in Minimally Invasive Surgeries",
       excerpt: "Our surgeons achieve remarkable success with new minimally invasive techniques reducing recovery time.",
-      image: "/images/surgery.jpg",
+      image: "/images/program.jpg",
       date: "March 10, 2025",
       author: "Dr. Priya Singh",
       category: "Medical Advances"
@@ -22,7 +22,7 @@ const MedicalNews = () => {
     {
       title: "Free Health Camp Next Month",
       excerpt: "MediCare announces free community health screening camp focusing on preventive healthcare.",
-      image: "/images/health-camp.jpg",
+      image: "/images/service.jpg",
       date: "March 5, 2025",
       author: "Admin Team",
       category: "Community Outreach"
