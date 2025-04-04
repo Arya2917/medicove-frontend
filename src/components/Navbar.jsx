@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, User, LogOut, Shield } from 'lucide-react';
+import { Search, ChevronDown, Shield } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { navbarData } from '../data/NavbarData';
 import { useAuth } from '../hooks/useAuth';
@@ -55,6 +55,9 @@ const Navbar = () => {
     return false;
   };
 
+  // Check if user is an admin
+  const isAdmin = user?.isAdmin === true;
+
   return (
     <div className="w-full bg-white shadow-md sticky top-0 z-50">
       {/* Top bar with search and contact info */}
@@ -89,43 +92,33 @@ const Navbar = () => {
               </div>
             </div>
             
-            <button className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium">
-              English
-            </button>
+           
 
             {isAuthenticated() ? (
-              <div className="relative group">
+              isAdmin ? (
                 <button 
-                  className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center"
+                  onClick={() => navigate('/admin/dashboard')}
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center"
                 >
-                  <User size={18} className="mr-2" />
-                  {user?.name || 'User'}
+                  <Shield size={18} className="mr-2" />
+                  Admin Dashboard
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 invisible group-hover:visible transition-all z-50">
-                  <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Profile
-                  </Link>
-                  <button 
-                    onClick={handleLogout} 
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    <div className="flex items-center">
-                      <LogOut size={16} className="mr-2" />
-                      Logout
-                    </div>
-                  </button>
-                </div>
-              </div>
+              ) : (
+                <button 
+                  onClick={() => navigate('/dashboard')}
+                  className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium"
+                >
+                  User Dashboard
+                </button>
+              )
             ) : (
               <div className="flex space-x-2">
                 <button 
                   onClick={() => navigate('/login')}
-                  className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center"
+                  className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium"
                 >
-                  <User size={18} className="mr-2" />
                   Login
                 </button>
-                {/* Modified Admin button to be the same height as the English button */}
                 <button 
                   onClick={() => navigate('/admin-login')}
                   className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center"
@@ -145,7 +138,7 @@ const Navbar = () => {
           <nav className="flex flex-wrap justify-center">
             {navbarData.map((item, index) => {
               const path = item.name === 'Home' ? '/' : 
-                          `/${item.name.toLowerCase().replace(/\s+/g, '-')}`;
+                        `/${item.name.toLowerCase().replace(/\s+/g, '-')}`;
               const activeItem = isActive(path);
               
               return (
@@ -199,25 +192,6 @@ const Navbar = () => {
                 </div>
               );
             })}
-            
-            {/* User Dashboard Button - Only shown when authenticated */}
-            {isAuthenticated() && (
-              <div className="relative">
-                <Link
-                  to="/dashboard"
-                  className={`group py-5 px-6 text-base font-medium flex items-center transition-all ${
-                    isActive('/dashboard')
-                      ? 'text-teal-600 bg-white'
-                      : 'text-gray-700 hover:text-teal-600 hover:bg-white'
-                  }`}
-                >
-                  <span>Dashboard</span>
-                  <div className={`absolute bottom-0 left-0 w-full h-0.5 bg-teal-600 transform ${
-                    isActive('/dashboard') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                  } transition-transform origin-left`}></div>
-                </Link>
-              </div>
-            )}
           </nav>
         </div>
       </div>

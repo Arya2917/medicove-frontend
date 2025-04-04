@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
   Calendar,
@@ -18,6 +18,7 @@ import AllAppointments from "./components/AllAppointments";
 const AdminDashboard = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Redirect non-admin users
   if (!isAuthenticated() || !user?.isAdmin) {

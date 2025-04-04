@@ -11,7 +11,7 @@ const DashboardHeader = () => {
   
   const handleLogout = () => {
     logout();
-    navigate('/Home');
+    navigate('/');
   };
   
   const toggleNotifications = () => {
