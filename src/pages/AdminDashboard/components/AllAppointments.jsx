@@ -1,101 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Check, X, MoreHorizontal, Calendar, Clock, User, FileText } from "lucide-react";
+import { useAuth } from "../../../hooks/useAuth";
 
 const AllAppointments = () => {
-  // Sample appointment data - in a real app, you would fetch this from your backend
-  const [appointments, setAppointments] = useState([
-    { 
-      id: 1, 
-      patient: "John Doe", 
-      patientEmail: "john.doe@example.com",
-      patientPhone: "+1 (555) 123-4567",
-      doctor: "Dr. Maria Rodriguez", 
-      specialty: "Cardiology",
-      date: "2025-04-01", 
-      time: "09:30 AM", 
-      status: "Confirmed",
-      notes: "Follow-up consultation",
-      paymentStatus: "Paid"
-    },
-    { 
-      id: 2, 
-      patient: "Sarah Johnson", 
-      patientEmail: "sarah.johnson@example.com",
-      patientPhone: "+1 (555) 234-5678",
-      doctor: "Dr. Robert Chen", 
-      specialty: "Neurology",
-      date: "2025-04-01", 
-      time: "10:45 AM", 
-      status: "Completed",
-      notes: "Initial consultation",
-      paymentStatus: "Paid"
-    },
-    { 
-      id: 3, 
-      patient: "Michael Brown", 
-      patientEmail: "michael.brown@example.com",
-      patientPhone: "+1 (555) 345-6789",
-      doctor: "Dr. Lisa Wong", 
-      specialty: "Oncology",
-      date: "2025-04-01", 
-      time: "02:15 PM", 
-      status: "Confirmed",
-      notes: "Discussion of test results",
-      paymentStatus: "Pending"
-    },
-    { 
-      id: 4, 
-      patient: "Emily Davis", 
-      patientEmail: "emily.davis@example.com",
-      patientPhone: "+1 (555) 456-7890",
-      doctor: "Dr. James Wilson", 
-      specialty: "Orthopedic",
-      date: "2025-04-02", 
-      time: "11:00 AM", 
-      status: "Pending",
-      notes: "First-time consultation",
-      paymentStatus: "Unpaid"
-    },
-    { 
-      id: 5, 
-      patient: "Alex Thompson", 
-      patientEmail: "alex.thompson@example.com",
-      patientPhone: "+1 (555) 567-8901",
-      doctor: "Dr. Maria Rodriguez", 
-      specialty: "Cardiology",
-      date: "2025-04-02", 
-      time: "03:30 PM", 
-      status: "Confirmed",
-      notes: "Regular check-up",
-      paymentStatus: "Paid"
-    },
-    { 
-      id: 6, 
-      patient: "Linda Martinez", 
-      patientEmail: "linda.martinez@example.com",
-      patientPhone: "+1 (555) 678-9012",
-      doctor: "Dr. Sarah Patel", 
-      specialty: "Dermatology",
-      date: "2025-04-03", 
-      time: "09:00 AM", 
-      status: "Pending",
-      notes: "Skin condition examination",
-      paymentStatus: "Unpaid"
-    },
-    { 
-      id: 7, 
-      patient: "Robert Wilson", 
-      patientEmail: "robert.wilson@example.com",
-      patientPhone: "+1 (555) 789-0123",
-      doctor: "Dr. Lisa Wong", 
-      specialty: "Oncology",
-      date: "2025-04-03", 
-      time: "01:15 PM", 
-      status: "Cancelled",
-      notes: "Follow-up consultation",
-      paymentStatus: "Refunded"
-    },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { getToken } = useAuth();
+
+  // Fetch appointments from API
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        setLoading(true);
+        const token = getToken();
+        
+        const response = await fetch("http://localhost:4000/api/admin/appointments", {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Error fetching appointments: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setAppointments(data);
+      } catch (err) {
+        console.error("Failed to fetch appointments:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchAppointments();
+  }, [getToken]);
 
   // Filter options
   const [filters, setFilters] = useState({
@@ -106,7 +48,7 @@ const AllAppointments = () => {
   });
 
   // Get unique doctors for the filter dropdown
-  const uniqueDoctors = [...new Set(appointments.map(app => app.doctor))];
+  const uniqueDoctors = [...new Set(appointments.map(app => app.docData.name))];
 
   // Handle filter changes
   const handleFilterChange = (e) => {
@@ -116,29 +58,68 @@ const AllAppointments = () => {
 
   // Apply filters to appointments
   const filteredAppointments = appointments.filter(appointment => {
+    // Map API status to UI status
+    const status = appointment.cancelled ? "Cancelled" : 
+                  appointment.isCompleted ? "Completed" : 
+                  appointment.payment ? "Confirmed" : "Pending";
+    
     // Search term filter
     const searchMatches = 
-      appointment.patient.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      appointment.doctor.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      appointment.specialty.toLowerCase().includes(filters.searchTerm.toLowerCase());
+      appointment.userData.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+      appointment.docData.name.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+      appointment.userData.email.toLowerCase().includes(filters.searchTerm.toLowerCase());
     
     // Status filter
-    const statusMatches = filters.status === "all" || appointment.status === filters.status;
+    const statusMatches = filters.status === "all" || status === filters.status;
     
     // Date filter
-    const dateMatches = !filters.date || appointment.date === filters.date;
+    const dateMatches = !filters.date || appointment.slotDate === filters.date;
     
     // Doctor filter
-    const doctorMatches = filters.doctor === "all" || appointment.doctor === filters.doctor;
+    const doctorMatches = filters.doctor === "all" || appointment.docData.name === filters.doctor;
     
     return searchMatches && statusMatches && dateMatches && doctorMatches;
   });
 
   // Handle appointment status change
-  const updateAppointmentStatus = (id, newStatus) => {
-    setAppointments(appointments.map(app => 
-      app.id === id ? { ...app, status: newStatus } : app
-    ));
+  const updateAppointmentStatus = async (id, actionType) => {
+    try {
+      const token = getToken();
+      const endpoint = `http://localhost:4000/api/admin/appointments/${id}/${actionType}`;
+      
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to update appointment: ${response.status}`);
+      }
+      
+      // Update local state based on action type
+      setAppointments(appointments.map(app => {
+        if (app._id === id) {
+          switch(actionType) {
+            case 'cancel':
+              return { ...app, cancelled: true };
+            case 'complete':
+              return { ...app, isCompleted: true };
+            case 'confirm':
+              return { ...app, payment: true };
+            default:
+              return app;
+          }
+        }
+        return app;
+      }));
+      
+    } catch (err) {
+      console.error("Failed to update appointment:", err);
+      setError(err.message);
+    }
   };
 
   // Modal state for appointment details
@@ -156,6 +137,24 @@ const AllAppointments = () => {
     setShowDetails(false);
     setSelectedAppointment(null);
   };
+
+  // Helper function to get appointment status display
+  const getStatusDisplay = (appointment) => {
+    if (appointment.cancelled) return "Cancelled";
+    if (appointment.isCompleted) return "Completed";
+    if (appointment.payment) return "Confirmed";
+    return "Pending";
+  };
+
+  // Helper function to get payment status display
+  const getPaymentDisplay = (appointment) => {
+    if (appointment.payment) return "Paid";
+    return "Unpaid";
+  };
+
+  if (loading) return <div className="text-center p-8">Loading appointments...</div>;
+  
+  if (error) return <div className="text-center p-8 text-red-500">Error: {error}</div>;
 
   return (
     <div>
@@ -252,41 +251,36 @@ const AllAppointments = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredAppointments.length > 0 ? (
                 filteredAppointments.map((appointment) => (
-                  <tr key={appointment.id}>
+                  <tr key={appointment._id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{appointment.patient}</div>
-                      <div className="text-xs text-gray-500">{appointment.patientEmail}</div>
+                      <div className="text-sm font-medium text-gray-900">{appointment.userData.name}</div>
+                      <div className="text-xs text-gray-500">{appointment.userData.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{appointment.doctor}</div>
-                      <div className="text-xs text-gray-500">{appointment.specialty}</div>
+                      <div className="text-sm text-gray-900">{appointment.docData.name}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
-                        {new Date(appointment.date).toLocaleDateString()}
-                      </div>
-                      <div className="text-xs text-gray-500">{appointment.time}</div>
+                      <div className="text-sm text-gray-900">{appointment.slotDate}</div>
+                      <div className="text-xs text-gray-500">{appointment.slotTime}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span 
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                          ${appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' : 
-                            appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                            appointment.status === 'Completed' ? 'bg-blue-100 text-blue-800' :
+                          ${getStatusDisplay(appointment) === 'Confirmed' ? 'bg-green-100 text-green-800' : 
+                            getStatusDisplay(appointment) === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                            getStatusDisplay(appointment) === 'Completed' ? 'bg-blue-100 text-blue-800' :
                             'bg-red-100 text-red-800'}`}
                       >
-                        {appointment.status}
+                        {getStatusDisplay(appointment)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span 
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                          ${appointment.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 
-                            appointment.paymentStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                            appointment.paymentStatus === 'Unpaid' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'}`}
+                          ${getPaymentDisplay(appointment) === 'Paid' ? 'bg-green-100 text-green-800' : 
+                            'bg-red-100 text-red-800'}`}
                       >
-                        {appointment.paymentStatus}
+                        {getPaymentDisplay(appointment)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -298,22 +292,31 @@ const AllAppointments = () => {
                         >
                           <FileText size={18} />
                         </button>
-                        {appointment.status === 'Pending' && (
+                        {!appointment.payment && !appointment.cancelled && !appointment.isCompleted && (
                           <button 
-                            onClick={() => updateAppointmentStatus(appointment.id, 'Confirmed')}
+                            onClick={() => updateAppointmentStatus(appointment._id, 'confirm')}
                             className="text-green-600 hover:text-green-900"
                             title="Confirm"
                           >
                             <Check size={18} />
                           </button>
                         )}
-                        {(appointment.status === 'Pending' || appointment.status === 'Confirmed') && (
+                        {!appointment.cancelled && !appointment.isCompleted && (
                           <button 
-                            onClick={() => updateAppointmentStatus(appointment.id, 'Cancelled')}
+                            onClick={() => updateAppointmentStatus(appointment._id, 'cancel')}
                             className="text-red-600 hover:text-red-900"
                             title="Cancel"
                           >
                             <X size={18} />
+                          </button>
+                        )}
+                        {appointment.payment && !appointment.cancelled && !appointment.isCompleted && (
+                          <button 
+                            onClick={() => updateAppointmentStatus(appointment._id, 'complete')}
+                            className="text-blue-600 hover:text-blue-900"
+                            title="Complete"
+                          >
+                            <Check size={18} />
                           </button>
                         )}
                       </div>
@@ -355,15 +358,15 @@ const AllAppointments = () => {
                         <User className="mr-2 text-gray-400" size={18} />
                         <div>
                           <p className="text-xs text-gray-500">Patient</p>
-                          <p className="text-sm font-medium">{selectedAppointment.patient}</p>
+                          <p className="text-sm font-medium">{selectedAppointment.userData.name}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center">
-                        <Stethoscope className="mr-2 text-gray-400" size={18} />
+                        <User className="mr-2 text-gray-400" size={18} />
                         <div>
                           <p className="text-xs text-gray-500">Doctor</p>
-                          <p className="text-sm font-medium">{selectedAppointment.doctor}</p>
+                          <p className="text-sm font-medium">{selectedAppointment.docData.name}</p>
                         </div>
                       </div>
                       
@@ -371,7 +374,7 @@ const AllAppointments = () => {
                         <Calendar className="mr-2 text-gray-400" size={18} />
                         <div>
                           <p className="text-xs text-gray-500">Date</p>
-                          <p className="text-sm font-medium">{new Date(selectedAppointment.date).toLocaleDateString()}</p>
+                          <p className="text-sm font-medium">{selectedAppointment.slotDate}</p>
                         </div>
                       </div>
                       
@@ -379,20 +382,24 @@ const AllAppointments = () => {
                         <Clock className="mr-2 text-gray-400" size={18} />
                         <div>
                           <p className="text-xs text-gray-500">Time</p>
-                          <p className="text-sm font-medium">{selectedAppointment.time}</p>
+                          <p className="text-sm font-medium">{selectedAppointment.slotTime}</p>
                         </div>
                       </div>
                     </div>
                     
                     <div className="mt-4">
                       <p className="text-xs text-gray-500">Contact Information</p>
-                      <p className="text-sm">Email: {selectedAppointment.patientEmail}</p>
-                      <p className="text-sm">Phone: {selectedAppointment.patientPhone}</p>
+                      <p className="text-sm">Email: {selectedAppointment.userData.email}</p>
                     </div>
                     
                     <div className="mt-4">
-                      <p className="text-xs text-gray-500">Notes</p>
-                      <p className="text-sm">{selectedAppointment.notes}</p>
+                      <p className="text-xs text-gray-500">Amount</p>
+                      <p className="text-sm">₹{selectedAppointment.amount}</p>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <p className="text-xs text-gray-500">Appointment Created</p>
+                      <p className="text-sm">{new Date(selectedAppointment.date).toLocaleString()}</p>
                     </div>
                     
                     <div className="mt-4 flex space-x-4">
@@ -400,12 +407,12 @@ const AllAppointments = () => {
                         <p className="text-xs text-gray-500">Status</p>
                         <span 
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            ${selectedAppointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' : 
-                              selectedAppointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                              selectedAppointment.status === 'Completed' ? 'bg-blue-100 text-blue-800' :
+                            ${getStatusDisplay(selectedAppointment) === 'Confirmed' ? 'bg-green-100 text-green-800' : 
+                              getStatusDisplay(selectedAppointment) === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                              getStatusDisplay(selectedAppointment) === 'Completed' ? 'bg-blue-100 text-blue-800' :
                               'bg-red-100 text-red-800'}`}
                         >
-                          {selectedAppointment.status}
+                          {getStatusDisplay(selectedAppointment)}
                         </span>
                       </div>
                       
@@ -413,12 +420,10 @@ const AllAppointments = () => {
                         <p className="text-xs text-gray-500">Payment</p>
                         <span 
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            ${selectedAppointment.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 
-                              selectedAppointment.paymentStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                              selectedAppointment.paymentStatus === 'Unpaid' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'}`}
+                            ${getPaymentDisplay(selectedAppointment) === 'Paid' ? 'bg-green-100 text-green-800' : 
+                              'bg-red-100 text-red-800'}`}
                         >
-                          {selectedAppointment.paymentStatus}
+                          {getPaymentDisplay(selectedAppointment)}
                         </span>
                       </div>
                     </div>
@@ -426,53 +431,41 @@ const AllAppointments = () => {
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                {selectedAppointment.status === 'Pending' && (
-                  <>
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => {
-                        updateAppointmentStatus(selectedAppointment.id, 'Confirmed');
-                        closeModal();
-                      }}
-                    >
-                      Confirm Appointment
-                    </button>
-                    <button
-                      type="button"
-                      className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => {
-                        updateAppointmentStatus(selectedAppointment.id, 'Cancelled');
-                        closeModal();
-                      }}
-                    >
-                      Cancel Appointment
-                    </button>
-                  </>
+                {!selectedAppointment.payment && !selectedAppointment.cancelled && !selectedAppointment.isCompleted && (
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => {
+                      updateAppointmentStatus(selectedAppointment._id, 'confirm');
+                      closeModal();
+                    }}
+                  >
+                    Confirm Payment
+                  </button>
                 )}
-                {selectedAppointment.status === 'Confirmed' && (
-                  <>
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => {
-                        updateAppointmentStatus(selectedAppointment.id, 'Completed');
-                        closeModal();
-                      }}
-                    >
-                      Mark as Completed
-                    </button>
-                    <button
-                      type="button"
-                      className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => {
-                        updateAppointmentStatus(selectedAppointment.id, 'Cancelled');
-                        closeModal();
-                      }}
-                    >
-                      Cancel Appointment
-                    </button>
-                  </>
+                {selectedAppointment.payment && !selectedAppointment.cancelled && !selectedAppointment.isCompleted && (
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => {
+                      updateAppointmentStatus(selectedAppointment._id, 'complete');
+                      closeModal();
+                    }}
+                  >
+                    Mark as Completed
+                  </button>
+                )}
+                {!selectedAppointment.cancelled && !selectedAppointment.isCompleted && (
+                  <button
+                    type="button"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => {
+                      updateAppointmentStatus(selectedAppointment._id, 'cancel');
+                      closeModal();
+                    }}
+                  >
+                    Cancel Appointment
+                  </button>
                 )}
                 <button
                   type="button"
