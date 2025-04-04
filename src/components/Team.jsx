@@ -8,7 +8,7 @@ const ManagementTeam = () => {
   const teamLeader = {
     name: "Arya Thanekar",
     position: "Chief Executive Officer",
-    image: "/api/placeholder/500/500",
+    image: "/images/arya.jpeg",
     education: "B.Tech in Information Technology, Pune Institute of Computer Technology",
     about: "Arya Thanekar leads the team with innovative vision and technical expertise. With a strong foundation in Information Technology from PICT, Arya has pioneered several groundbreaking initiatives and continues to drive the organization toward technological excellence and sustainable growth."
   };
@@ -17,21 +17,21 @@ const ManagementTeam = () => {
     {
       name: "Sampada Tagalpallewar",
       position: "Chief Technology Officer",
-      image: "/api/placeholder/400/400",
+      image: "/images/sam.jpeg",
       education: "B.Tech in Information Technology, Pune Institute of Computer Technology",
       about: "Sampada Tagalpallewar oversees all technological aspects and innovation strategies. Her expertise in emerging technologies and system architecture has been instrumental in developing scalable and robust solutions."
     },
     {
       name: "Arnav Vaidya",
       position: "Chief Operations Officer",
-      image: "/api/placeholder/400/400",
+      image: "/images/arnav.jpeg",
       education: "B.Tech in Information Technology, Pune Institute of Computer Technology",
       about: "Arnav Vaidya manages day-to-day operations and implementation strategies. With exceptional analytical skills and attention to detail, he ensures optimal performance across all operational workflows and project executions."
     },
     {
       name: "Pranav Sonar",
       position: "Chief Product Officer",
-      image: "/api/placeholder/400/400",
+      image: "/images/pranav.jpeg",
       education: "B.Tech in Information Technology, Pune Institute of Computer Technology",
       about: "Pranav Sonar heads product development and client solutions. His user-centric approach and technical insight drive the creation of intuitive and effective products that exceed client expectations and market demands."
     }
@@ -72,7 +72,7 @@ const ManagementTeam = () => {
                 <img 
                   src={teamLeader.image} 
                   alt={teamLeader.name} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-[100%] object-cover object-center"
                 />
               </div>
             </div>
@@ -108,7 +108,7 @@ const ManagementTeam = () => {
                 <img 
                   src={member.image} 
                   alt={member.name} 
-                  className="w-full h-64 object-cover object-center"
+                  className="w-full aspect-[4/3] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-teal-900 to-transparent opacity-0 hover:opacity-70 transition-opacity flex items-end">
                   <div className="p-6 w-full">
