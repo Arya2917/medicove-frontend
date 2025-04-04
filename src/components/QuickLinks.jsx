@@ -46,31 +46,37 @@ const QuickLinks = () => {
         <img 
           src={placeholderImage}
           alt={doctor.name} 
-          className="w-full h-48 object-cover object-center rounded-t-lg"
+          className={`object-cover object-center ${viewMode === 'grid' ? 'w-full h-48 rounded-t-lg' : 'w-24 h-24 rounded-lg'}`}
         />
       );
     }
     
-    // Valid image extensions
-    const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg'];
+    // Valid image extensions - be more inclusive
+    const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg', 'bmp', 'ico'];
     
-    // Check if doctor image exists and has valid extension
     let doctorImage = placeholderImage;
     
     if (doctor.image && typeof doctor.image === 'string') {
-      // Get file extension if present
-      const extension = doctor.image.split('.').pop().toLowerCase();
-      const hasValidExtension = validExtensions.includes(extension);
-      
-      if (doctor.image.startsWith('http')) {
-        // For URLs, use directly
-        doctorImage = doctor.image;
-      } else if (doctor.image.startsWith('uploads') && hasValidExtension) {
-        // For server uploads
-        doctorImage = `http://localhost:4000/${doctor.image}`;
-      } else if (hasValidExtension) {
-        // For relative paths with valid extensions
-        doctorImage = `http://localhost:4000/${doctor.image}`;
+      try {
+        // Normalize backslashes to forward slashes
+        const normalizedPath = doctor.image.replace(/\\/g, '/');
+        
+        // Get file extension if present
+        const extension = normalizedPath.split('.').pop().toLowerCase();
+        
+        // Always attempt to use the image path regardless of extension
+        // We'll rely on the onError handler to catch failures
+        if (normalizedPath.startsWith('http')) {
+          // For complete URLs, use directly
+          doctorImage = normalizedPath;
+        } else {
+          // For all other paths, prepend server base URL
+          doctorImage = `http://localhost:4000/${normalizedPath}`;
+        }
+      } catch (error) {
+        console.error("Error processing doctor image path:", error);
+        // Fallback to placeholder on path processing error
+        doctorImage = placeholderImage;
       }
     }
     
