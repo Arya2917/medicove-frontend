@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { Calendar, Clock, ChevronDown, ChevronRight, CreditCard, FileText } from 'lucide-react';
+import { Calendar, Clock, ChevronDown, ChevronRight, CreditCard, FileText, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -12,6 +12,8 @@ const DashboardHome = () => {
   const [doctorsList, setDoctorsList] = useState([]);
   const [showAllAppointments, setShowAllAppointments] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   
   // Extract user ID from JWT token if it doesn't exist
   const getUserId = () => {
@@ -31,6 +33,42 @@ const DashboardHome = () => {
     return null;
   };
   
+  // Fetch user profile
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setProfileLoading(true);
+        const token = getToken();
+        
+        if (!token) {
+          console.error("No authentication token available");
+          setProfileLoading(false);
+          return;
+        }
+        
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_GET_PROFILE_API}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        
+        if (response.data.success) {
+          setUserProfile(response.data.user);
+          console.log("User profile fetched:", response.data.user);
+        } else {
+          console.error("Failed to fetch user profile:", response.data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+    
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user, getToken]);
+
   // Load Razorpay script
   useEffect(() => {
     if (!window.Razorpay) {
@@ -114,7 +152,7 @@ const DashboardHome = () => {
       try {
         const token = getToken();
         const response = await axios.get(
-          'http://localhost:4000/api/user/doctors',
+          `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_DOCTORS_API}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         
@@ -138,6 +176,24 @@ const DashboardHome = () => {
   const getDoctorSpeciality = (docId) => {
     const doctor = doctorsList.find(doc => doc._id === docId);
     return doctor ? doctor.speciality : 'Not specified';
+  };
+
+  // Get user's display name
+  const getUserDisplayName = () => {
+    // First try to get the name from the fetched profile
+    if (userProfile?.name) return userProfile.name;
+    
+    // Fall back to the name from the auth context
+    if (user?.name) return user.name;
+    
+    // Default value if no name is available
+    return "Patient";
+  };
+
+  // Get user's profile initial for avatar
+  const getUserInitial = () => {
+    const name = getUserDisplayName();
+    return name.charAt(0).toUpperCase();
   };
 
   // Handle payment for appointment
@@ -207,9 +263,9 @@ const DashboardHome = () => {
             }
           },
           prefill: {
-            name: user?.name || "",
-            email: user?.email || "",
-            contact: user?.phone || "", // User's phone number if available
+            name: getUserDisplayName(),
+            email: userProfile?.email || user?.email || "",
+            contact: userProfile?.phone || user?.phone || "", 
           },
           // Enable various payment methods including UPI
           config: {
@@ -282,12 +338,24 @@ const DashboardHome = () => {
       <div className="bg-teal-600 text-white rounded-xl p-6 mb-8 shadow-md">
         <div className="flex flex-col md:flex-row items-center">
           <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-            <div className="w-24 h-24 rounded-full bg-white text-teal-600 flex items-center justify-center text-4xl font-bold">
-              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-            </div>
+            {profileLoading ? (
+              <div className="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center">
+                <User size={36} className="text-white" />
+              </div>
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-white text-teal-600 flex items-center justify-center text-4xl font-bold">
+                {getUserInitial()}
+              </div>
+            )}
           </div>
           <div className="flex-grow text-center md:text-left">
-            <h2 className="text-2xl font-bold">Welcome, {user?.name || "User"}!</h2>
+            <h2 className="text-2xl font-bold">
+              {profileLoading ? (
+                <span>Loading profile...</span>
+              ) : (
+                <span>Welcome, {getUserDisplayName()}!</span>
+              )}
+            </h2>
             <p className="text-teal-100">We are here to help you manage your healthcare journey.</p>
             <div className="mt-2">
               <span className="inline-block bg-teal-700 rounded-full px-3 py-1 text-sm font-semibold mr-2">
