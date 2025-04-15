@@ -63,7 +63,7 @@ const AdminHome = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:4000/api/admin/appointments",
+          `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_APPOINTMENTS_API}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

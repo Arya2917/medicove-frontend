@@ -23,7 +23,7 @@ const UserProfile = () => {
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/user/get-profile', {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_GET_PROFILE_API}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
@@ -73,7 +73,7 @@ const UserProfile = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch('http://localhost:4000/api/user/update-profile', {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_UPDATE_PROFILE_API}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const UserProfile = () => {
     
     reader.onload = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/user/update-profile-image', {
+        const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_UPDATE_PROFILE_IMAGE_API}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

@@ -6,7 +6,8 @@ import { useFetch } from '../hooks/useFetch';
 
 const QuickLinks = () => {
   // Fetch doctors from the API
-  const { data, loading, error } = useFetch('http://localhost:4000/api/user/doctors');
+  const { data, loading, error } = useFetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_DOCTORS_API}`);
+  ;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
@@ -71,7 +72,8 @@ const QuickLinks = () => {
           doctorImage = normalizedPath;
         } else {
           // For all other paths, prepend server base URL
-          doctorImage = `http://localhost:4000/${normalizedPath}`;
+          doctorImage = `${import.meta.env.VITE_BASE_API_URL}/${normalizedPath}`;
+
         }
       } catch (error) {
         console.error("Error processing doctor image path:", error);

@@ -15,7 +15,7 @@ const AllAppointments = () => {
         setLoading(true);
         const token = getToken();
         
-        const response = await fetch("http://localhost:4000/api/admin/appointments", {
+        const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_APPOINTMENTS_API}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const AllAppointments = () => {
   const updateAppointmentStatus = async (id, actionType) => {
     try {
       const token = getToken();
-      const endpoint = `http://localhost:4000/api/admin/appointments/${id}/${actionType}`;
+      const endpoint = `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_APPOINTMENTS_API}/${id}/${actionType}`;
       
       const response = await fetch(endpoint, {
         method: 'PUT',

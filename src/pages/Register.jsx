@@ -27,7 +27,7 @@ const RegisterPage = () => {
     
     try {
       // Call the registration API
-      const response = await fetch('http://localhost:4000/api/user/register', {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_REGISTER_API}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

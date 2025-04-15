@@ -5,7 +5,8 @@ import { useFetch } from '../../../hooks/useFetch';
 
 const DoctorsList = () => {
   // Fetch doctors from the API
-  const { data, loading, error } = useFetch('http://localhost:4000/api/user/doctors');
+  const { data, loading, error } = useFetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_DOCTORS_API}`);
+  ;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [imageErrors, setImageErrors] = useState({});

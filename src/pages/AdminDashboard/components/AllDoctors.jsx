@@ -15,7 +15,7 @@ const AllDoctors = () => {
 
   // Fetch doctors data from API using the useFetch hook
   const { data, loading: fetchLoading, error: fetchError } = useFetch(
-    "http://localhost:4000/api/admin/all-doctors"
+    `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_ALL_DOCTORS_API}`
   );
 
   // Update state when data is fetched
@@ -42,7 +42,7 @@ const AllDoctors = () => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       try {
         const token = getToken();
-        const response = await fetch(`http://localhost:4000/api/admin/doctors/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_DOCTOR_DETAIL_API}/${id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

@@ -25,24 +25,30 @@ const LoginPage = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.pathname]);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
+    // Log the environment variables to check if they're correctly set
+    console.log("Base URL:", import.meta.env.VITE_BASE_API_URL);
+    console.log("Login API Path:", import.meta.env.VITE_USER_LOGIN_API);
+  
+    const loginUrl = `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_LOGIN_API}`;
+    console.log("Constructed Login URL:", loginUrl);
+  
     try {
       // Call the API
-      const response = await fetch("http://localhost:4000/api/user/login", {
+      const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.success) {
         // Call the login function from useAuth to set the user session
         await login({ token: data.token, email });
@@ -59,7 +65,7 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl w-full flex rounded-xl shadow-lg overflow-hidden">

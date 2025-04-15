@@ -27,7 +27,7 @@ const BookAppointment = () => {
 
   // Fetch doctors from the API
   const { data, loading } = useFetch(
-    "http://localhost:4000/api/user/doctors"
+    `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_DOCTORS_API}`
   );
   const doctors = data?.doctors || [];
 
@@ -145,7 +145,7 @@ const BookAppointment = () => {
 
       // Use the correct endpoint
       const response = await fetch(
-        "http://localhost:4000/api/user/book-appointment",
+        `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_BOOK_APPOINTMENT_API}`,
         {
           method: "POST",
           headers: {

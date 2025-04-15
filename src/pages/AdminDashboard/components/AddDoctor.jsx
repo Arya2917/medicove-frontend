@@ -134,7 +134,7 @@ const AddDoctor = () => {
         formDataToSend.append("image", imageFile);
       }
       
-      const response = await fetch("http://localhost:4000/api/admin/add-doctor", {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_ADD_DOCTOR_API}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`

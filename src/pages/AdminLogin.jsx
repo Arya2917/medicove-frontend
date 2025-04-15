@@ -17,7 +17,7 @@ const AdminLoginPage = () => {
 
     try {
       // Call the admin login API
-      const response = await fetch("http://localhost:4000/api/admin/login", {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_ADMIN_LOGIN_API}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

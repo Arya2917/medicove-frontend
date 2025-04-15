@@ -87,7 +87,7 @@ const DashboardHome = () => {
         
         // Make the API call with the available user ID and include the token in headers
         const response = await axios.post(
-          'http://localhost:4000/api/user/appointments', 
+          `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_APPOINTMENTS_API}`, 
           { userId }, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -154,7 +154,7 @@ const DashboardHome = () => {
       
       // Call the Razorpay payment API
       const response = await axios.post(
-        'http://localhost:4000/api/user/payment-razorpay',
+        `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_PAYMENT_RAZORPAY_API}`,
         { appointmentId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -182,7 +182,7 @@ const DashboardHome = () => {
             // Send payment verification to your server
             try {
               const verifyResponse = await axios.post(
-                'http://localhost:4000/api/user/verify-razorpay',
+                `${import.meta.env.VITE_BASE_API_URL}${import.meta.env.VITE_USER_VERIFY_RAZORPAY_API}`,
                 {
                   appointmentId,
                   razorpay_payment_id: response.razorpay_payment_id,
