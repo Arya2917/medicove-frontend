@@ -257,7 +257,7 @@ const Cardiology = () => {
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden">
                   <img 
-                    src="/images/testimonials/patient1.jpg" 
+                    src="/images/rajesh.jpg" 
                     alt="Rajesh Kumar" 
                     className="w-full h-full object-cover"
                   />

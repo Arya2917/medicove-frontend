@@ -40,11 +40,11 @@ const EmergencyCare = () => {
           </p>
           <div className="mt-8">
             <a 
-              href="tel:1066" 
+              href="tel:7028587790" 
               className="bg-white text-red-600 px-8 py-3 rounded-full font-bold text-lg inline-flex items-center hover:bg-gray-100 transition-colors"
             >
               <Phone size={20} className="mr-2" />
-              Call Emergency: 1066
+              Call Emergency: 121
             </a>
           </div>
         </div>

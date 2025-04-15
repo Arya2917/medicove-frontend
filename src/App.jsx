@@ -18,7 +18,6 @@ import Ophthalmology from "./pages/speciality/Ophthalmology";
 
 // About Us pages
 import History from "./components/History";
-import BoardOfDirectors from "./components/Directors";
 import ManagementTeam from "./components/Team";
 import VisionMission from "./components/Vision";
 import AccreditationAwards from "./components/Accredations";
@@ -63,7 +62,6 @@ function App() {
         
         {/* About Us routes */}
         <Route path="/about/history" element={<History />} />
-        <Route path="/about/board-of-directors" element={<BoardOfDirectors />} />
         <Route path="/about/management-team" element={<ManagementTeam />} />
         <Route path="/about/vision-&-mission" element={<VisionMission />} />
         <Route path="/about/accredationawards" element={<AccreditationAwards />} />

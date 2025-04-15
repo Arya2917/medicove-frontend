@@ -67,7 +67,7 @@ const Navbar = () => {
           <div className="flex items-center justify-center flex-1 max-w-2xl">
             <input
               type="text"
-              placeholder="Search Doctor or Hospital"
+              placeholder="Search Services"
               className="border border-gray-300 rounded-l-lg px-6 py-3 w-full focus:outline-none focus:ring-2 focus:ring-teal-400 text-lg"
             />
             <button className="bg-teal-600 text-white p-4 rounded-r-lg hover:bg-teal-700 transition-colors">

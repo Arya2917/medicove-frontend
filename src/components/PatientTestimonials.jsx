@@ -8,7 +8,7 @@ const PatientTestimonials = () => {
       name: "Rajesh Kumar",
       age: 45,
       treatment: "Cardiac Bypass Surgery",
-      image: "/images/patient1.jpg",
+      image: "/images/rajesh.jpg",
       rating: 5,
       quote: "I had almost given up hope until I met the cardiac team here. The care I received was extraordinary, and I'm now back to my normal life. The doctors explained everything clearly and made a scary process feel manageable.",
       doctor: "Dr. Aisha Sharma",

@@ -163,7 +163,7 @@ const AdminLoginPage = () => {
         <div className="hidden md:block w-1/2 bg-indigo-600 relative">
           <div className="absolute inset-0 flex flex-col items-center justify-center p-10 text-white">
             <img
-              src="/images/doctor-logo.png"
+              src="/images/hospital-logo.jpg"
               alt="Hospital Logo"
               className="h-20 w-auto mb-8"
             />

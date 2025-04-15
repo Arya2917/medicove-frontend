@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Column 1: About & Contact */}
           <div>
             <div className="flex items-center mb-6">
-              <img src="/images/doctor-logo.png" alt="Hospital Logo" className="h-12" />
+              <img src="/images/hospital-logo.jpg" alt="Hospital Logo" className="h-12" />
               <span className="ml-3 text-xl font-bold">MediCare</span>
             </div>
             
@@ -24,17 +24,17 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-start">
                 <MapPin size={20} className="text-yellow-500 mr-3 mt-1 flex-shrink-0" />
-                <p className="text-teal-100">123 Medical Center Drive, Delhi 110001, India</p>
+                <p className="text-teal-100">2910 Medical Center Drive,Pune 411041, India</p>
               </div>
               
               <div className="flex items-center">
                 <Phone size={20} className="text-yellow-500 mr-3 flex-shrink-0" />
-                <p className="text-teal-100">1860-500-1066</p>
+                <p className="text-teal-100">+91 7028587790</p>
               </div>
               
               <div className="flex items-center">
                 <Mail size={20} className="text-yellow-500 mr-3 flex-shrink-0" />
-                <p className="text-teal-100">contact@medicare.com</p>
+                <p className="text-teal-100">asthanekar2009@gmail.com</p>
               </div>
               
               <div className="flex items-start">

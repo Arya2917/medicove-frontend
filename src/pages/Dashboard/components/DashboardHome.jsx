@@ -11,15 +11,17 @@ const DashboardHome = () => {
   const [error, setError] = useState(null);
   const [doctorsList, setDoctorsList] = useState([]);
   const [showAllAppointments, setShowAllAppointments] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   
   // Extract user ID from JWT token if it doesn't exist
   const getUserId = () => {
     if (user?.id) return user.id;
     
     // Try to extract from token if user has no ID
-    if (user?.token) {
+    const token = getToken();
+    if (token) {
       try {
-        const payload = user.token.split('.')[1];
+        const payload = token.split('.')[1];
         const decodedPayload = JSON.parse(atob(payload));
         return decodedPayload.id;
       } catch (error) {
@@ -29,7 +31,35 @@ const DashboardHome = () => {
     return null;
   };
   
-  // Fetch appointments from API
+  // Load Razorpay script
+  useEffect(() => {
+    if (!window.Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      
+      script.onload = () => {
+        setRazorpayLoaded(true);
+        console.log("Razorpay script loaded successfully");
+      };
+      
+      script.onerror = () => {
+        console.error("Failed to load Razorpay script");
+      };
+      
+      document.body.appendChild(script);
+      
+      return () => {
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+      };
+    } else {
+      setRazorpayLoaded(true);
+    }
+  }, []);
+  
+  // Fetch appointments and doctors
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -113,18 +143,120 @@ const DashboardHome = () => {
   // Handle payment for appointment
   const handlePayment = async (appointmentId) => {
     try {
+      if (!razorpayLoaded) {
+        alert("Payment system is loading. Please try again in a moment.");
+        return;
+      }
+      
       const token = getToken();
       
-      // Call the payment API
+      console.log("Starting payment process for appointment:", appointmentId);
+      
+      // Call the Razorpay payment API
       const response = await axios.post(
-        'http://localhost:4000/api/user/payment',
+        'http://localhost:4000/api/user/payment-razorpay',
         { appointmentId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
+      // Debug the response
+      console.log("Payment initialization response:", response.data);
+      
       if (response.data.success) {
-        // Handle successful payment initiation (e.g., redirect to payment gateway)
-        window.location.href = response.data.paymentUrl || '#';
+        // Check if key_id exists
+        if (!response.data.key_id) {
+          console.error("No Razorpay key_id found in response");
+          alert("Payment configuration error. Please contact support.");
+          return;
+        }
+        
+        // Initialize Razorpay checkout with the key from response
+        const options = {
+          key: response.data.key_id,
+          amount: response.data.amount,
+          currency: response.data.currency,
+          name: "Hospital Name",
+          description: "Appointment Payment",
+          order_id: response.data.order_id,
+          handler: async function (response) {
+            // Send payment verification to your server
+            try {
+              const verifyResponse = await axios.post(
+                'http://localhost:4000/api/user/verify-razorpay',
+                {
+                  appointmentId,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              
+              if (verifyResponse.data.success) {
+                // Update the local appointments list
+                setAppointments(prev => 
+                  prev.map(app => 
+                    app._id === appointmentId ? {...app, payment: true} : app
+                  )
+                );
+                alert("Payment successful!");
+              }
+            } catch (err) {
+              console.error("Payment verification failed:", err);
+              alert("Payment verification failed. Please contact support.");
+            }
+          },
+          prefill: {
+            name: user?.name || "",
+            email: user?.email || "",
+            contact: user?.phone || "", // User's phone number if available
+          },
+          // Enable various payment methods including UPI
+          config: {
+            display: {
+              blocks: {
+                utib: { //name for AXIS block
+                  name: "Pay using UPI",
+                  instruments: [
+                    {
+                      method: "upi"
+                    }
+                  ]
+                },
+                other: { //name for other block
+                  name: "Other Payment Methods",
+                  instruments: [
+                    {
+                      method: "card"
+                    },
+                    {
+                      method: "netbanking"
+                    },
+                    {
+                      method: "wallet"
+                    }
+                  ]
+                }
+              },
+              sequence: ["block.utib", "block.other"],
+              preferences: {
+                show_default_blocks: false // Should UPI block be shown by default
+              }
+            }
+          },
+          theme: {
+            color: "#0D9488", // Teal color to match your UI
+          },
+        };
+        
+        console.log("Initializing Razorpay with options:", {
+          ...options,
+          key: "PRESENT" // Don't log the actual key for security
+        });
+        
+        // Initialize Razorpay
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
       } else {
         alert('Payment initiation failed: ' + (response.data.message || 'Unknown error'));
       }
@@ -193,13 +325,15 @@ const DashboardHome = () => {
             <span className="text-teal-600 mr-3"><Calendar size={24} /></span>
             <h3 className="text-xl font-semibold text-gray-900">Upcoming Appointments</h3>
           </div>
-          <button 
-            onClick={toggleAppointmentsView} 
-            className="text-teal-600 hover:text-teal-800 flex items-center text-sm font-medium"
-          >
-            {showAllAppointments ? 'Show Less' : 'View All'} 
-            {showAllAppointments ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-          </button>
+          {appointments.length > 3 && (
+            <button 
+              onClick={toggleAppointmentsView} 
+              className="text-teal-600 hover:text-teal-800 flex items-center text-sm font-medium"
+            >
+              {showAllAppointments ? 'Show Less' : 'View All'} 
+              {showAllAppointments ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+          )}
         </div>
         <div className="p-6">
           {loading ? (
@@ -217,6 +351,7 @@ const DashboardHome = () => {
                         <button 
                           onClick={() => handlePayment(appointment._id)}
                           className="bg-teal-600 text-white px-3 py-1 rounded-md text-sm mr-2 hover:bg-teal-700 flex items-center"
+                          disabled={!razorpayLoaded}
                         >
                           <CreditCard size={14} className="mr-1" />
                           Pay ₹{appointment.amount}

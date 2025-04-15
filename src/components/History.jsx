@@ -77,7 +77,7 @@ const History = () => {
                 </div>
                 <div className="md:w-1/3">
                   <img 
-                    src="/api/placeholder/600/400" 
+                    src="/images/logo.jpg" 
                     alt="MediCare's first hospital in 1985" 
                     className="w-full h-auto rounded-lg shadow"
                   />
